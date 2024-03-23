@@ -65,6 +65,7 @@
                             } else {
                                 echo "<p>Ville : Information non disponible</p>";
                             }
+                            echo afficherProchainsDeparts($gare_selectionnee);
                         } else {
                             echo "Aucune information disponible pour la gare '$gare_selectionnee'";
                         }

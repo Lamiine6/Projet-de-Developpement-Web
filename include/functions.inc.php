@@ -1,5 +1,7 @@
 <?php
     declare(strict_types=1);
+    define("TOKEN", "c7cef527-189f-48cf-be7a-2f101887224d");
+    define("URL", "https://".TOKEN."@api.sncf.com/v1/");
 
     function affichageApi(): String {
         $clefapi = "AugsigvysPt1vhXBzcxNDUzyrz47n2rrMX9YWMOJ";
@@ -146,6 +148,45 @@
         } else {
             $res = "Erreur lors de la récupération des données des gares";
         }
+        return $res;
+    }
+
+    function decodeTemps(string $temps): string {
+        $datetime = DateTime::createFromFormat('Ymd\THis', $temps);
+        if ($datetime instanceof DateTime) {
+            return $datetime->format('Y-m-d H:i:s');
+        } else {
+            return '';
+        }
+    }
+
+    function afficherProchainsDeparts(string $id): string {
+        $url = URL."coverage/sncf/stop_areas/".$id."/departures";
+        $fluxjson = file_get_contents($url);
+        $res = "<ul>\n";
+        if($fluxjson !== false) {
+            $donnees = json_decode($fluxjson, true);
+            $destinations = array();
+            foreach($donnees['departures'] as $departure) {
+                $destination = $departure['display_informations']['direction'];
+                $heure_depart = decodeTemps($departure['stop_date_time']['departure_date_time']);
+                if(!array_key_exists($destination, $destinations)) {
+                    $destinations[$destination] = array();
+                }
+                $destinations[$destination][] = $heure_depart;
+            }
+            foreach($destinations as $destination => $horaires) {
+                $res .= "\t\t\t\t\t\t<li>Prochains départs à destination de : ".$destination.":\n";
+                $res .= "\t\t\t\t\t\t\t<ul>\n";
+                foreach($horaires as $heure) {
+                    $res .= "\t\t\t\t\t\t\t\t<li>".$heure."</li>\n";
+                }
+                $res .= "\t\t\t\t\t\t\t</ul>\n";
+                $res .= "\t\t\t\t\t\t</li>\n";
+            }
+        }
+        $res .= "\t\t\t\t\t</ul>\n";
+        $res .= "\t\t\t\t\t<a href=\"index.php\" style=\"display:inline-block;margin-top:20px;padding:10px;background-color:#007bff;color:white;text-decoration:none;border-radius:5px;\">Retour</a>\n";
         return $res;
     }
 ?>
