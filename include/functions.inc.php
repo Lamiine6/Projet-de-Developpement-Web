@@ -109,6 +109,30 @@
         }
     }
 
+/*
+    function obtenirCorrespondance($nom_gare){
+        $api_key = 'c7cef527-189f-48cf-be7a-2f101887224d';
+        $url = "https://api.sncf.com/v1/coverage/sncf/places?q=".urlencode($nom_gare)."&type[]=stop_area&key=$api_key";
+        $fluxjson = file_get_contents($url);
+        if ($fluxjson !== false) {
+            return "Erreur lors de la connexion à l'API"; 
+        }else {
+            $donnee = json_decode($fluxjson, true);
+            if(isset($donnees['places']) && !empty($donnees['places'])) {
+                $gare_info = $donnees['places'][0];
+                $url_correspondances = "https://api.sncf.com/v1/coverage/sncf/stop_areas/$gare_info['id']}/connections?key=$api_key";
+                $fluxjson_correspondances = file_get_contents($url_correspondances);
+                if ($fluxjson_correspondances !== false) {
+                     $correspondances = json_decode($fluxjson_correspondances, true);
+
+                return $correspondances;
+                }
+        }
+    }
+    
+    
+*/
+    
     function distanceEntrePoints($lat1, $lon1, $lat2, $lon2) {
         $earth_radius = 6371; // Rayon moyen de la Terre en kilomètres
         $dLat = deg2rad($lat2 - $lat1);
